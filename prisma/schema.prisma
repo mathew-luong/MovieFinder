@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int     @id @default(autoincrement())
+  email      String  @unique
+  password   String
+  createdAt  DateTime @default(now())
+  favourites Favourited[] // Users can favourite many movies
+}
+
+model Movie {
+  id            Int     @id 
+  title         String
+  rating        String
+  releaseDate   String
+  runtime       String
+  overview      String
+  genres        String[]
+  imgPath       String
+  trailerUrl    String
+  simMoviesArr  String[]
+  favUsers      Favourited[] // Movies can be favourited by many users
+}
+
+// Explicit many to many relation, zero or more users can favourite zero or more movies
+model Favourited {
+    user   User @relation(fields: [userId], references: [id])
+    userId Int
+    movie   Movie @relation(fields: [movieId], references: [id])
+    movieId Int // relation scalar field (used in the `@relation` attribute above)
+    assignedAt DateTime @default(now())
+    
+    @@id([userId, movieId]) // Multi field (composite id / primary key)
+}

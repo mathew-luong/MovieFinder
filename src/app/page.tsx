@@ -1,91 +1,69 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+import Image from "next/image";
+import { Gridlayout } from "@/app/components/gridlayout";
+import { Thumbnail } from "@/app/components/thumbnail";
+import headerpic from "../../public/images/homeHeader.jpg";
+import type { Metadata } from "next";
+import { SearchBtn } from "@/app/components/searchbtn";
+import RandomMovieBtn from "@/app/components/randommoviebtn";
 
-const inter = Inter({ subsets: ['latin'] })
+export const metadata: Metadata = {
+    title: "Home | Movie Finder",
+    description:
+        "Movie Finder is an application designed to help you find what to watch!",
+};
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+async function getPopularMovies() {
+    // Revalidate every 12 hours (43200 seconds)
+    const res = await fetch(
+        `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1&region=CA`,
+        { next: { revalidate: 43200 } }
+    );
+    const data = await res.json();
+    return data;
+}
+
+interface PopMovies {
+    results: Array<object>;
+}
+
+// Homepage, shows most popular movies
+export default async function Home() {
+    const popMovies: PopMovies = await getPopularMovies();
+    const popArr: Array<object> = popMovies.results;
+
+    return (
+        <div className="flex p-8 flex-column sm:w-full sm:h-screen">
+            <div className="w-full">
+                {/* <h1 className="text-2xl text-white">Movie Finder</h1> */}
+                <div className="relative w-full mb-8">
+                    <Image
+                        src={headerpic}
+                        className="object-cover object-left w-full h-64 mx-auto rounded-xl drop-shadow-xl dark:drop-shadow-none"
+                        alt="Image"
+                        priority={true}
+                    />
+                    <h1 className="absolute text-3xl font-bold text-white left-4 top-4 md:left-8 md:top-8">
+                        Home |
+                    </h1>
+                    <div className="absolute text-white bottom-4 sm:bottom-0 left-4 md:left-6 md:bottom-6">
+                        <SearchBtn />
+                    </div>
+                </div>
+                <div className="flex flex-col flex-wrap items-start gap-4 mt-3 mb-6 align-middle">
+                    <span className="text-2xl font-bold dark:text-white">
+                        Don&apos;t know what to watch?
+                    </span>
+                    <RandomMovieBtn />
+                </div>
+                <h1 className="mb-8 text-2xl font-bold dark:text-white">
+                    Most Popular
+                </h1>
+                <Gridlayout>
+                    {popArr.map((movie: any) => {
+                        return <Thumbnail key={movie.id} movie={movie} />;
+                    })}
+                </Gridlayout>
+            </div>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    );
 }
