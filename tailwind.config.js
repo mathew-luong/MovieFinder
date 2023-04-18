@@ -23,6 +23,13 @@ module.exports = {
                 graybgl: "#545454",
                 graytext: "#AAAAAA",
             },
+            gridTemplateColumns: {
+                // Each column gets the same amt of space
+                fluid: "repeat(auto-fit,minmax(15rem,1fr))",
+            },
+            screens: {
+                "3xl": "2000px",
+            },
         },
     },
     plugins: [],

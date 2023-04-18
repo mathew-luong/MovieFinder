@@ -12,33 +12,32 @@ datasource db {
 
 model User {
   id         Int     @id @default(autoincrement())
-  email      String  @unique
-  password   String
+  username      String  @unique
+  hashedPassword   String
   createdAt  DateTime @default(now())
   favourites Favourited[] // Users can favourite many movies
 }
 
 model Movie {
-  id            Int     @id 
+  id            Int     @id @unique
   title         String
-  rating        String
-  releaseDate   String
-  runtime       String
-  overview      String
+  rating        String?
+  releaseDate   String?
+  runtime       String?
+  overview      String?
   genres        String[]
-  imgPath       String
-  trailerUrl    String
-  simMoviesArr  String[]
+  imgPath       String?
+  trailerUrl    String?
   favUsers      Favourited[] // Movies can be favourited by many users
 }
 
 // Explicit many to many relation, zero or more users can favourite zero or more movies
 model Favourited {
-    user   User @relation(fields: [userId], references: [id])
+    user   User @relation(fields: [userId], references: [id]) // id of user is a foreign key
     userId Int
-    movie   Movie @relation(fields: [movieId], references: [id])
+    movie   Movie @relation(fields: [movieId], references: [id]) // id of movie is a foreign key
     movieId Int // relation scalar field (used in the `@relation` attribute above)
     assignedAt DateTime @default(now())
-    
+
     @@id([userId, movieId]) // Multi field (composite id / primary key)
 }

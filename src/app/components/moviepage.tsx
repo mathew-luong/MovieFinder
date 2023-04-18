@@ -4,6 +4,7 @@ import { MdStarRate } from "react-icons/md";
 import { AiFillYoutube, AiOutlineCalendar } from "react-icons/ai";
 import { BiTime } from "react-icons/bi";
 import { SimilarMoviesBtn } from "./similarmoviesbtn";
+import FavouriteBtn from "./favouritebtn";
 
 interface MovieProp {
     title: string;
@@ -15,6 +16,7 @@ interface MovieProp {
     imgPath: string;
     trailerUrl: string;
     simMoviesArr: string[];
+    id: number;
 }
 
 export function MoviePage(props: MovieProp) {
@@ -34,7 +36,7 @@ export function MoviePage(props: MovieProp) {
     const simMoviesArr = props.simMoviesArr;
 
     return (
-        <div className="flex flex-col gap-4 mt-28 md:my-10 lg:gap-8 lg:flex-row">
+        <div className="flex flex-col gap-4 mt-20 md:my-10 lg:gap-8 lg:flex-row">
             <Image
                 src={imgPath}
                 width={500}
@@ -47,7 +49,7 @@ export function MoviePage(props: MovieProp) {
                 <h1 className="mb-4 text-2xl font-bold dark:text-white">
                     {title}
                 </h1>
-                <div className="flex flex-wrap gap-4 mb-4">
+                <div className="flex flex-wrap gap-4 mb-6">
                     {genres.map((g: any) => {
                         return (
                             <h2
@@ -59,40 +61,59 @@ export function MoviePage(props: MovieProp) {
                         );
                     })}
                 </div>
-                <div className="w-[100%] flex mb-4">
-                    <MdStarRate
-                        size="24"
-                        className="mr-2 align-middle text-redtheme"
-                    />
-                    <h3 className="mr-2 dark:text-white sm:mr-8">{rating}</h3>
-                    <AiOutlineCalendar
-                        size="24"
-                        className="mr-2 align-middle text-redtheme"
-                    />
-                    <h3 className="mr-2 dar:text-white sm:mr-8">
+                <div className="w-[100%] flex flex-wrap mb-6 gap-4 sm:gap-8">
+                    <h3 className="flex dark:text-white">
+                        <MdStarRate
+                            size="24"
+                            className="mr-2 align-middle text-redtheme"
+                        />
+                        {rating}
+                    </h3>
+                    <h3 className="flex dark:text-white">
+                        <AiOutlineCalendar
+                            size="24"
+                            className="mr-2 align-middle text-redtheme"
+                        />
                         {releaseDate}
                     </h3>
-                    <BiTime
-                        size="24"
-                        className="mr-2 align-middle text-redtheme"
-                    />
-                    <h3 className="dark:text-white">{runtime}</h3>
+                    <h3 className="flex dark:text-white">
+                        <BiTime
+                            size="24"
+                            className="mr-2 align-middle text-redtheme"
+                        />
+                        {runtime}
+                    </h3>
                 </div>
                 <p className="mb-8 dark:text-white">{overview}</p>
-                {/* Show Trailer button if the trailer is found */}
-                <a
-                    href={trailerUrl}
-                    target="_blank"
-                    className="mb-16 text-redtheme dark:text-white btn hover:text-white"
-                    style={
-                        trailerUrl !== ""
-                            ? { display: "inline-flex" }
-                            : { display: "none" }
-                    }
-                >
-                    <AiFillYoutube size={20} className="self-center mr-2" />
-                    <p>watch the trailer</p>
-                </a>
+                <div className="flex flex-wrap w-full gap-4 mb-16">
+                    <FavouriteBtn
+                        id={props.id}
+                        title={props.title}
+                        rating={props.rating}
+                        releaseDate={props.releaseDate}
+                        runtime={props.runtime}
+                        overview={props.overview}
+                        genres={props.genres}
+                        imgPath={props.imgPath}
+                        trailerUrl={props.trailerUrl}
+                        simMoviesArr={props.simMoviesArr}
+                    />
+                    {/* Show Trailer button if the trailer is found */}
+                    <a
+                        href={trailerUrl}
+                        target="_blank"
+                        className=" text-redtheme dark:text-white btn hover:text-white"
+                        style={
+                            trailerUrl !== ""
+                                ? { display: "inline-flex" }
+                                : { display: "none" }
+                        }
+                    >
+                        <AiFillYoutube size={20} className="self-center mr-2" />
+                        <p>watch the trailer</p>
+                    </a>
+                </div>
+
                 {/* Display heading if this movie has at least one similar movie */}
                 {simMoviesArr && simMoviesArr.length !== 0 && (
                     <h3 className="mb-4 text-lg font-bold dark:text-white">

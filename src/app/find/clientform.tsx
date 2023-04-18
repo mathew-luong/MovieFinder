@@ -130,9 +130,9 @@ export default function ClientForm() {
     };
 
     return (
-        <div className="flex flex-col p-8 pt-0 sm:w-full">
+        <div className="flex flex-col p-6 pt-0 sm:p-8 sm:w-full">
             <div className="w-full">
-                <h1 className="pt-8 mb-3 text-2xl font-bold dark:text-white">
+                <h1 className="pt-6 mb-3 text-2xl font-bold sm:pt-0 dark:text-white">
                     Find a Movie
                 </h1>
                 <form

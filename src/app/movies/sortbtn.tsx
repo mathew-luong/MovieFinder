@@ -12,7 +12,7 @@ export default function SortBtn() {
     // Used to route the user to the result of their query
     const router = useRouter();
 
-    const sortParam = searchParams.get("sortBy");
+    const sortParam = searchParams!.get("sortBy");
 
     function handleSort(event: SelectChangeEvent) {
         setSort(event.target.value as string);
@@ -20,7 +20,7 @@ export default function SortBtn() {
     }
 
     return (
-        <div className="flex flex-wrap justify-between p-8">
+        <div className="flex flex-wrap justify-between p-6 sm:p-8">
             <h1 className="mb-8 text-2xl font-bold dark:text-white sm:mb-0">
                 {sortParam}
             </h1>

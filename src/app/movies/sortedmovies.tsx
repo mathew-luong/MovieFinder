@@ -48,7 +48,7 @@ export default async function SortedMovies({ searchParams }: SearchParams) {
     let movieArr: Array<object> = movies.results;
 
     return (
-        <div className="flex p-8 pt-0 flex-column sm:w-full sm:h-screen">
+        <div className="flex p-6 pt-0 sm:p-8 flex-column sm:w-full sm:h-screen">
             <div className="flex flex-col w-full">
                 {/* Render sorted movie list */}
                 <MovieList movies={movieArr} />

@@ -31,7 +31,7 @@ export default function RandomMovieBtn() {
         router.push(`/movies/${data}`);
     }
 
-    // Don't display the toggle button until mounted
+    // Don't display the button until mounted
     if (!mounted) {
         return null;
     }

@@ -1,3 +1,5 @@
+export const revalidate = 0;
+
 // Get an object containing movies from a random page
 async function getRandomMovies() {
     // Discover returns thousands of pages of results, pick a random page from 1-500 to ensure a relevant movie

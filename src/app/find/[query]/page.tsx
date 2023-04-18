@@ -94,7 +94,7 @@ export default async function Page({
     }
 
     return (
-        <div className="flex flex-column sm:w-[100%] sm:h-screen p-8">
+        <div className="flex flex-column sm:w-[100%] sm:h-screen p-6 sm:p-8">
             <div className="flex flex-col w-full">
                 <BackBtn />
                 <h1 className="flex flex-wrap mt-16 mb-8 text-2xl font-bold text-black dark:text-white">

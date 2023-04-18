@@ -23,7 +23,7 @@ interface SearchParams {
 export default async function Movies({ searchParams }: SearchParams) {
     return (
         <div>
-            <div className="relative w-full p-8 pb-0">
+            <div className="relative w-full p-6 pb-0 sm:p-8">
                 <Image
                     src={headerpic2}
                     className="object-cover object-right h-64 mx-auto rounded-xl drop-shadow-xl dark:drop-shadow-none"

@@ -29,12 +29,10 @@ interface PopMovies {
 // Homepage, shows most popular movies
 export default async function Home() {
     const popMovies: PopMovies = await getPopularMovies();
-    const popArr: Array<object> = popMovies.results;
 
     return (
-        <div className="flex p-8 flex-column sm:w-full sm:h-screen">
+        <div className="flex p-6 sm:p-8 flex-column sm:w-full sm:h-screen">
             <div className="w-full">
-                {/* <h1 className="text-2xl text-white">Movie Finder</h1> */}
                 <div className="relative w-full mb-8">
                     <Image
                         src={headerpic}
@@ -59,7 +57,7 @@ export default async function Home() {
                     Most Popular
                 </h1>
                 <Gridlayout>
-                    {popArr.map((movie: any) => {
+                    {popMovies.results.map((movie: any) => {
                         return <Thumbnail key={movie.id} movie={movie} />;
                     })}
                 </Gridlayout>

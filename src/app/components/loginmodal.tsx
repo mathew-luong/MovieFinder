@@ -1,35 +1,101 @@
 "use client";
 
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 import { BiLogIn } from "react-icons/bi";
 import { IoMdClose } from "react-icons/io";
+import { LoginModalContext } from "./modalprovider";
+import { useForm, SubmitHandler, FieldValues } from "react-hook-form";
+import axios from "axios";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function LoginModal() {
-    let [isOpen, setIsOpen] = useState(false);
-    let [mode, setMode] = useState("Login");
+    const [mode, setMode] = useState("Login");
 
-    function closeModal() {
-        setIsOpen(false);
-    }
+    const router = useRouter();
 
-    function openModal() {
-        setMode("Login");
+    const {
+        register,
+        handleSubmit,
+        setError,
+        reset,
+        formState: { errors },
+    } = useForm<FieldValues>({
+        defaultValues: {
+            username: "",
+            password: "",
+            confirmPassword: "",
+        },
+    });
 
-        setIsOpen(true);
-    }
+    // Context for if the modal should be open or closed
+    const { show, openModal, closeModal } = useContext(LoginModalContext);
 
     function switchMode() {
         if (mode === "Login") {
+            reset();
             setMode("Sign Up");
         } else {
+            reset();
             setMode("Login");
         }
     }
 
-    function handleFormSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setIsOpen(false);
+    function handleLogin(data: FieldValues) {
+        // pass in username, password into next-auth authenticator
+        signIn("credentials", {
+            username: data.username,
+            password: data.password,
+            redirect: false,
+        }).then((callback) => {
+            // successful authentication
+            if (callback?.ok) {
+                router.refresh();
+                reset();
+                toast.success("Logged in", {
+                    id: "login",
+                });
+                exitModal();
+            }
+            if (callback?.error) {
+                toast.error("Invalid Credentials", {
+                    id: "loginerror",
+                });
+            }
+        });
+    }
+
+    function handleSignup(data: FieldValues) {
+        axios
+            .post("/api/register", data)
+            .then((response) => {
+                toast.success("Successfully created account", {
+                    id: "signup",
+                });
+                setMode("Login");
+            })
+            .catch((error) => {
+                toast.error(error.response.data, {
+                    id: "signuperror",
+                });
+            });
+        reset();
+    }
+
+    const onSubmit: SubmitHandler<FieldValues> = (data) => {
+        if (mode === "Login") {
+            handleLogin(data);
+        } else {
+            handleSignup(data);
+        }
+    };
+
+    function exitModal() {
+        setMode("Login");
+        reset();
+        closeModal();
     }
 
     return (
@@ -47,9 +113,10 @@ export default function LoginModal() {
                     <span className="hidden sm:block">Login</span>
                 </button>
             </div>
-
-            <Transition appear show={isOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeModal}>
+            {/* <Toaster /> */}
+            <Transition appear show={show} as={Fragment}>
+                {/* <Transition appear show={isOpen} as={Fragment}> */}
+                <Dialog as="div" className="relative z-10" onClose={exitModal}>
                     <Transition.Child
                         as={Fragment}
                         enter="ease-out duration-300"
@@ -83,7 +150,7 @@ export default function LoginModal() {
                                     <button
                                         className="absolute top-6 right-6"
                                         type="button"
-                                        onClick={closeModal}
+                                        onClick={exitModal}
                                         aria-label="Close Modal"
                                     >
                                         <IoMdClose
@@ -93,7 +160,7 @@ export default function LoginModal() {
                                     </button>
                                     <form
                                         className="flex flex-col gap-3 mt-6"
-                                        onSubmit={handleFormSubmit}
+                                        onSubmit={handleSubmit(onSubmit)}
                                     >
                                         <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
                                             {mode === "Login" &&
@@ -101,13 +168,24 @@ export default function LoginModal() {
                                             {mode === "Sign Up" &&
                                                 "Create an account on Movie Finder to favourite movies and access many other features."}
                                         </p>
-                                        <label htmlFor="email">Email</label>
+                                        <label htmlFor="email">Username</label>
                                         <input
-                                            id="email"
-                                            placeholder="user@mail.com"
-                                            type="email"
+                                            id="username"
+                                            placeholder="Username"
+                                            type="text"
                                             className="px-4 py-2 rounded-md bg-lightbg dark:bg-graybg"
+                                            required
+                                            {...register("username", {
+                                                pattern: /^[A-Za-z0-9]*$/,
+                                            })}
                                         ></input>
+                                        {/* errors will return when field validation fails  */}
+                                        {errors.username && (
+                                            <span className="text-redtheme">
+                                                Username must only contain
+                                                letters and/or numbers.
+                                            </span>
+                                        )}
                                         <label htmlFor="password" className="">
                                             Password
                                         </label>
@@ -116,6 +194,9 @@ export default function LoginModal() {
                                             placeholder="Password"
                                             type="password"
                                             className="px-4 py-2 rounded-md bg-lightbg dark:bg-graybg"
+                                            minLength={5}
+                                            required
+                                            {...register("password")}
                                         ></input>
                                         {mode === "Sign Up" && (
                                             <>
@@ -127,7 +208,27 @@ export default function LoginModal() {
                                                     placeholder="Password"
                                                     type="password"
                                                     className="px-4 py-2 rounded-md bg-lightbg dark:bg-graybg"
+                                                    minLength={5}
+                                                    required
+                                                    {...register(
+                                                        "confirmPassword",
+                                                        {
+                                                            validate: (
+                                                                value,
+                                                                formValues
+                                                            ) =>
+                                                                value ===
+                                                                formValues.password,
+                                                        }
+                                                    )}
                                                 ></input>
+                                                {/* errors will return when field validation fails  */}
+                                                {errors.confirmPassword && (
+                                                    <span className="text-redtheme">
+                                                        Passwords don&apos;t
+                                                        match
+                                                    </span>
+                                                )}
                                             </>
                                         )}
                                         <div className="flex justify-between gap-4 mt-4">

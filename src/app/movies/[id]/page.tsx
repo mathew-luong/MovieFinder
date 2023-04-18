@@ -3,6 +3,13 @@ import posterNoImg from "../../../../public/images/NoImg.png";
 import { MoviePage } from "@/app/components/moviepage";
 import type { Metadata } from "next";
 
+// Set name of page
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+    // Fetch response is cached from component below (only 1 fetch request)
+    const movie = await getMovie(params.id);
+    return { title: movie.title + " | Movie Finder" };
+}
+
 function getGenres(genres: Array<any>): string[] {
     if (genres == null) {
         return [""];
@@ -71,20 +78,27 @@ async function getVideos(movieId: number) {
     return videos;
 }
 
+// export async function generateStaticParams() {
+//     const res = await fetch(
+//         `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_API_KEY}&language=en-US&page=1&region=CA`,
+//         { next: { revalidate: 43200 } }
+//     );
+//     const data = await res.json();
+//     console.log("GENERATED STATIC PARAMS");
+//     return data.results.map((movie) => ({
+//         id: movie.id,
+//     }));
+// }
+
 // Returns an object containing details of the specified movieId
+// Revalidates every 24 hours
 async function getMovie(movieId: number) {
     const res = await fetch(
-        `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.TMDB_API_KEY}&language=en-US`
+        `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.TMDB_API_KEY}&language=en-US`,
+        { next: { revalidate: 86400 } }
     );
     const movie = await res.json();
     return movie;
-}
-
-// Set name of page
-export async function generateMetadata({ params }: any): Promise<Metadata> {
-    // Fetch response is cached from component below (only 1 fetch request)
-    const movie = await getMovie(params.id);
-    return { title: movie.title + " | Movie Finder" };
 }
 
 interface MovieProp {
@@ -126,12 +140,13 @@ export default async function Page({ params }: { params: MovieProp }) {
         : (imgPath = `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
 
     return (
-        <div className="flex flex-column sm:w-[100%] sm:h-screen px-8 md:p-8 mx-auto">
+        <div className="flex flex-column sm:w-[100%] sm:h-screen p-6 sm:p-8 mx-auto">
             <div className="w-[100%] flex 2xl:p-8 pt-0 md:pt-8">
                 {/* Client rendered back button */}
                 <BackBtn />
                 {/* Render Movie Page Component */}
                 <MoviePage
+                    id={params.id}
                     imgPath={imgPath}
                     genres={genres}
                     overview={movie.overview}

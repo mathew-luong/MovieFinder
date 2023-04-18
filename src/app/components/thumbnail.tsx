@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import posterImg from "../../../public/images/NoImg.png";
-import { useRouter } from "next/navigation";
 
 function getMovieGenre(id: number): string {
     type genres = {
@@ -53,7 +52,13 @@ interface MovieProp {
 }
 
 export function Thumbnail({ movie }: { movie: MovieProp }) {
-    const movieGenre = getMovieGenre(movie.genre_ids[0]);
+    let movieGenre;
+    // Genre ids (need to be converted to genre words)
+    if (!movie.genre_ids) {
+        movieGenre = movie.genres[0];
+    } else {
+        movieGenre = getMovieGenre(movie.genre_ids[0]);
+    }
     const id: number = movie.id;
 
     // If the movie doesn't have a poster img, set it to a default img
@@ -61,6 +66,11 @@ export function Thumbnail({ movie }: { movie: MovieProp }) {
     movie.poster_path == null
         ? (imgPath = posterImg)
         : (imgPath = `https://image.tmdb.org/t/p/w500${movie.poster_path}`);
+
+    // If a movie has an img path use that as the poster img
+    if (movie.imgPath) {
+        imgPath = movie.imgPath;
+    }
 
     return (
         // Link to movie page containing all the movie details /movies/movieId
