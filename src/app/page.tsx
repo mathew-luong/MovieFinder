@@ -5,6 +5,7 @@ import headerpic from "../../public/images/homeHeader.jpg";
 import type { Metadata } from "next";
 import { SearchBtn } from "@/app/components/searchbtn";
 import RandomMovieBtn from "@/app/components/randommoviebtn";
+import getCurrUser from "./libs/session";
 
 export const metadata: Metadata = {
     title: "Home | Movie Finder",
@@ -30,9 +31,17 @@ interface PopMovies {
 export default async function Home() {
     const popMovies: PopMovies = await getPopularMovies();
 
+    // Get the currently logged in user (if it exists)
+    let currUser = await getCurrUser();
+
     return (
         <div className="flex p-6 sm:p-8 flex-column sm:w-full sm:h-screen">
             <div className="w-full">
+                {currUser && (
+                    <h1 className="mb-6 text-2xl font-bold">
+                        Hello, {currUser.username}
+                    </h1>
+                )}
                 <div className="relative w-full mb-8">
                     <Image
                         src={headerpic}

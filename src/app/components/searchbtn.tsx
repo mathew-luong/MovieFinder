@@ -43,7 +43,7 @@ export function SearchBtn() {
                     value={searchString}
                     aria-label="Search Input"
                     placeholder="Search for a movie"
-                    className="relative z-10 w-16 h-12 pr-0 placeholder-white hover:text-white transition-all duration-200 ease-linear bg-transparent border-0 rounded-full outline-none cursor-pointer pl-14 peer focus:border-2 focus:w-[90%] focus:cursor-text focus:border-white focus:pl-12 focus:pr-4"
+                    className="relative z-10 w-16 h-12 pr-0 placeholder-white hover:text-white transition-all duration-200 ease-linear bg-transparent border-0 rounded-full outline-none cursor-pointer pl-16 peer focus:border-2 focus:w-[90%] focus:cursor-text focus:border-white focus:pl-12 focus:pr-4"
                 />
                 <BiSearch
                     size={32}
