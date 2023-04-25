@@ -16,6 +16,7 @@ export default async function Page() {
                 <div className="relative w-full">
                     <Image
                         src={header}
+                        placeholder="blur"
                         className="object-cover object-right h-64 mx-auto rounded-xl drop-shadow-xl dark:drop-shadow-none"
                         alt="Image"
                         priority={true}

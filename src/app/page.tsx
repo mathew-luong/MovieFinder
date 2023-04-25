@@ -45,6 +45,7 @@ export default async function Home() {
                 <div className="relative w-full mb-8">
                     <Image
                         src={headerpic}
+                        placeholder="blur"
                         className="object-cover object-left w-full h-64 mx-auto rounded-xl drop-shadow-xl dark:drop-shadow-none"
                         alt="Image"
                         priority={true}

@@ -28,6 +28,7 @@ export default async function Movies({ searchParams }: SearchParams) {
                     src={headerpic2}
                     className="object-cover object-right h-64 mx-auto rounded-xl drop-shadow-xl dark:drop-shadow-none"
                     alt="Image"
+                    placeholder="blur"
                     priority={true}
                 />
                 <h1 className="absolute text-3xl font-bold text-white left-12 bottom-6 md:left-16 md:top-16">
